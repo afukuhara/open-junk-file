@@ -1,6 +1,6 @@
 ;;; open-junk-file.el --- Open a junk (memo) file to try-and-error
 
-;; $Id: open-junk-file.el,v 1.3 2010/06/18 20:07:49 rubikitch Exp rubikitch $
+;; $Id: open-junk-file.el,v 1.3 2010/06/18 20:07:49 rubikitch Exp $
 
 ;; Copyright (C) 2010  rubikitch
 
@@ -112,7 +112,7 @@
 
 ;;; Code:
 
-(defvar open-junk-file-version "$Id: open-junk-file.el,v 1.3 2010/06/18 20:07:49 rubikitch Exp rubikitch $")
+(defvar open-junk-file-version "$Id: open-junk-file.el,v 1.3 2010/06/18 20:07:49 rubikitch Exp $")
 (eval-when-compile (require 'cl))
 (defgroup open-junk-file nil
   "open-junk-file"
@@ -120,12 +120,12 @@
 (defcustom open-junk-file-format "~/junk/%Y/%m/%d-%H%M%S."
   "*File format to put junk files with directory.
 It can include `format-time-string' format specifications."
-  :type 'string  
+  :type 'string
   :group 'open-junk-file)
 (defvaralias 'open-junk-file-format 'open-junk-file-directory)
 (defcustom open-junk-file-find-file-function 'find-file-other-window
   "*Function to open junk files."
-  :type 'function  
+  :type 'function
   :group 'open-junk-file)
 
 (defun open-junk-file ()
@@ -138,7 +138,12 @@ instead of *scratch* buffer. The junk code is SEARCHABLE."
   (let* ((file (format-time-string open-junk-file-format (current-time)))
          (dir (file-name-directory file)))
     (make-directory dir t)
-    (funcall open-junk-file-find-file-function (read-string "Junk Code (Enter extension): " file))))
+    (let ((newfile (read-string "Junk Code (Enter extension): " file)))
+      (if (string-match "\\." newfile)
+          (funcall open-junk-file-find-file-function newfile)
+        (progn (make-directory newfile t)
+               (find-file newfile))))))
+
 
 ;;;; Bug report
 (defvar open-junk-file-maintainer-mail-address
